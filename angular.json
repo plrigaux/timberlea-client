@@ -29,7 +29,7 @@
               "src/favicon.ico",
               "src/assets"
             ],
-            "styles": [
+            "styles": [  "src/themeTimber.scss",
               "src/styles.scss"
             ],
             "scripts": []

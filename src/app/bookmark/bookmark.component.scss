@@ -1,0 +1,15 @@
+mat-chip {
+    max-width: 170px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.filler {
+    flex-grow: 1;
+}
+
+.noBookmarks {
+    padding: 1em;
+    font-style: italic;
+}

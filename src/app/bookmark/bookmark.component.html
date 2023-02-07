@@ -1,0 +1,18 @@
+
+
+<div *ngIf="!bookmarks || bookmarks.length === 0;else displayBookmarks" class="noBookmarks">
+    No bookmasks
+</div>
+
+<ng-template #displayBookmarks>
+    <mat-chip-listbox class="mat-chip-list-stacked">
+        <mat-chip *ngFor="let chip of bookmarks; index as i" matTooltip="{{displayTooltip(chip)}}"
+            matTooltipPosition="right" (click)="onBookmarkClick(chip)" (removed)="remove(i)">
+            {{displayBookmark(chip)}}
+            <div class="filler"></div>
+            <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+            </button>
+        </mat-chip>
+    </mat-chip-listbox>
+</ng-template>

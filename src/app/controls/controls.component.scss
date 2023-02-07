@@ -1,0 +1,10 @@
+.file-detail td, .file-detail th {
+    padding-right: 1em;
+    text-align: left;
+}
+
+.buttonVertical {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}

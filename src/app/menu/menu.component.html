@@ -1,0 +1,21 @@
+<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item [disabled]="createFileDisable" (click)="newFile()">
+      <mat-icon>text_snippet</mat-icon>
+      <span>New file</span>
+    </button>
+    <button mat-menu-item [disabled]="createFolderDisable" (click)="newFolder()">
+      <mat-icon>folder</mat-icon>
+      <span>New folder</span>
+    </button>
+    <button mat-menu-item  (click)="onOpenBookmarks()">
+      <mat-icon>bookmark</mat-icon>
+      <span>Bookmarks</span>
+    </button>
+    <button mat-menu-item  (click)="onOpenHistory()">
+      <mat-icon>history</mat-icon>
+      <span>History</span>
+    </button>
+ </mat-menu>
