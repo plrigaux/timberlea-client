@@ -37,7 +37,7 @@ export class ImageViewerComponent implements OnInit {
     if (!this.list) {
       this.list = []
       this.data.list.forEach(fd => {
-        if (fd.type === FileType.File) {
+        if (fd.ftype === FileType.File) {
           if (fd.name.match(ImageViewerComponent.imageRE)) {
             this.list?.push(fd.name)
           }

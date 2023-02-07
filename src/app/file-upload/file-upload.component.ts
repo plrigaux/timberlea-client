@@ -76,7 +76,7 @@ export class FileUploadComponent implements OnInit {
       file.lastModified
       let fileDetails : FileDetails = {
         name: file.name,
-        type: FileType.File,
+        ftype: FileType.File,
         size: file.size,
         mtime: new Date(file.lastModified).toISOString()
       }

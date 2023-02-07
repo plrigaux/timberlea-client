@@ -23,7 +23,7 @@ export class FileDialogBoxComponent implements OnInit {
   }
 
   displayTypeIcon(): string {
-    switch (this.data.type) {
+    switch (this.data.ftype) {
       case FileType.Directory:
         return "folder"
     }

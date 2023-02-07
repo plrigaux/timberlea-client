@@ -22,7 +22,7 @@ export class BookmarkComponent implements OnInit {
       let newFile: FileDetailsPlus = {
         directory: file.directory,
         name: file.name,
-        type: file.type
+        ftype: file.ftype
       }
 
       this.bookmarks.push(newFile)
@@ -40,7 +40,7 @@ export class BookmarkComponent implements OnInit {
 
   onBookmarkClick(file: FileDetailsPlus) {
     console.log("file", file)
-    this.fss.cd(file.name, file.directory)
+    this.fss.list(file.name, file.directory)
     this.behavior.openBookmaks(false)
   }
 

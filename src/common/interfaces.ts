@@ -7,7 +7,7 @@ export enum FileType {
 export interface FileDetails {
     name: string
     size?: number
-    type: FileType;
+    ftype: FileType;
     mtime?: string
 }
 

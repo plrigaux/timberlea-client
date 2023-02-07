@@ -104,7 +104,7 @@ export class FileServerService {
     )
   }
 
-  cd(relPath: string, remoteDirectory: string | null = null, returnList = true): void {
+/*   cd(relPath: string, remoteDirectory: string | null = null, returnList = true): void {
     this.waitingSubject.next(true)
     let newRemoteDirectory: ChangeDir_Request = {
       remoteDirectory: remoteDirectory ? remoteDirectory : this.remoteDirectory,
@@ -114,7 +114,7 @@ export class FileServerService {
 
     console.log("path:", newRemoteDirectory)
 
-    this.http.put<ChangeDir_Response>(this.serverUrl + endpoints.FS_CD, newRemoteDirectory).pipe(
+    this.http.put<ChangeDir_Response>(this.serverUrl + endpoints.FS_LIST, newRemoteDirectory).pipe(
       tap((data: ChangeDir_Response) => {
         this.setRemoteDirectory(data)
       }),
@@ -130,19 +130,25 @@ export class FileServerService {
 
         }
       })
-  }
+  } */
 
-  list(path: string | null = null): void {
+  list(path: string | null = null, remoteDirectory: string | null = null): void {
     this.waitingSubject.next(true)
 
     if (path === null) {
       path = this.remoteDirectory
     }
 
-    let remoteDirectory = encodeURIComponent(path);
+    remoteDirectory =  remoteDirectory ? remoteDirectory : this.remoteDirectory;
+    let queryPath = remoteDirectory + "/" + path
+    let cleanQueryPath = queryPath.split("/").map(e => encodeURIComponent(e)).join("/");
+    //let queryPath = encodeURIComponent(remoteDirectory + "/" + path);
 
-    const url = this.serverUrl + endpoints.FS_LIST + "/" + remoteDirectory
+    let addslash : string = cleanQueryPath.length > 1 && cleanQueryPath.startsWith('/') ? "" : "/";
 
+    const url = this.serverUrl + endpoints.FS_LIST + addslash + cleanQueryPath
+
+    console.log(`list url ${url}`, path, remoteDirectory, "clean", cleanQueryPath);
     this.http.get<FileList_Response>(url).pipe(
       tap((data: FileList_Response) => {
         this.setRemoteDirectory(data)

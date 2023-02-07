@@ -111,7 +111,7 @@ export class TableNavigatorComponent implements OnInit, AfterViewInit, OnDestroy
       next: (newDirName: string) => {
         let newDir: FileDetails = {
           name: newDirName,
-          type: FileType.Directory
+          ftype: FileType.Directory
         }
 
         let remoteFiles = this.dataSource.data
@@ -141,7 +141,7 @@ export class TableNavigatorComponent implements OnInit, AfterViewInit, OnDestroy
 
     let remoteFiles: FileDetails[]
     if (!this.fileServerService.isHome()) {
-      remoteFiles = [{ name: '..', type: FileType.Directory }, ...filelist]
+      remoteFiles = [{ name: '..', ftype: FileType.Directory }, ...filelist]
     } else {
       remoteFiles = filelist
     }
@@ -179,7 +179,7 @@ export class TableNavigatorComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   displayType(e: FileDetails): string {
-    return FileType[e.type]
+    return FileType[e.ftype]
   }
 
   displayDateModified(e: FileDetails): string {
@@ -191,7 +191,7 @@ export class TableNavigatorComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   displayTypeIcon(e: FileDetails): string {
-    switch (e.type) {
+    switch (e.ftype) {
       case FileType.Directory:
         return "folder"
     }
@@ -200,24 +200,24 @@ export class TableNavigatorComponent implements OnInit, AfterViewInit, OnDestroy
 
   fileNameCSS(e: FileDetails): string {
     let cssClass = "file"
-    if (e.type == FileType.Directory) {
+    if (e.ftype == FileType.Directory) {
       cssClass = "directory"
     }
     return cssClass;
   }
 
   setCdPath(param: FileDetails) {
-    if (param.type == FileType.Directory) {
+    if (param.ftype == FileType.Directory) {
       //this.cdPath = param.name
-    } else if (param.type == FileType.File) {
+    } else if (param.ftype == FileType.File) {
       //this.fileName = param.name
     }
   }
 
   elementClick(element: FileDetails) {
-    if (element.type == FileType.Directory) {
-      this.fileServerService.cd(element.name)
-    } else if (element.type == FileType.File) {
+    if (element.ftype == FileType.Directory) {
+      this.fileServerService.list(element.name)
+    } else if (element.ftype == FileType.File) {
       this.downloadFileName(element.name)
     }
   }
@@ -247,7 +247,7 @@ export class TableNavigatorComponent implements OnInit, AfterViewInit, OnDestroy
   displaySize(param: FileDetails): string {
 
     let size = ""
-    if (param.type == FileType.File && param.size) {
+    if (param.ftype == FileType.File && param.size) {
       size = this.humanFileSize(param.size, true)
     }
     return size;
@@ -340,7 +340,7 @@ export class TableNavigatorComponent implements OnInit, AfterViewInit, OnDestroy
       let remoteFiles = this.dataSource.data
       remoteFiles.push({
         name: data.newFileName,
-        type: FileType.File
+        ftype: FileType.File
       })
 
       this.updateDataSource2(remoteFiles);

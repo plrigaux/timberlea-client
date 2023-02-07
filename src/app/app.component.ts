@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
   }
 
   cdRelPath(relPath: string) {
-    this.fileServerService.cd(relPath)
+    this.fileServerService.list(relPath)
   }
 
   list() {
@@ -62,9 +62,9 @@ export class AppComponent implements OnInit {
   }
 
   setCdPath(param: FileDetails) {
-    if (param.type == FileType.Directory) {
+    if (param.ftype == FileType.Directory) {
       this.cdPath = param.name
-    } else if (param.type == FileType.File) {
+    } else if (param.ftype == FileType.File) {
       this.fileName = param.name
     }
   }

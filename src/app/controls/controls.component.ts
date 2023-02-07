@@ -147,7 +147,7 @@ export class ControlsComponent implements OnInit, OnDestroy {
 
     switch (button) {
       case "download":
-        return this.fileDetails?.type === FileType.Directory
+        return this.fileDetails?.ftype === FileType.Directory
 
     }
 

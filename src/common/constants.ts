@@ -4,7 +4,7 @@ export namespace endpoints {
     export const FS = "/timber"
 
     export const LIST = "/list"
-    export const CD = "/cd"
+    //export const CD = "/cd"
     export const PWD = "/pwd"
     export const DOWNLOAD = "/download"
     export const DOWNZIP = "/downzip"
@@ -17,7 +17,7 @@ export namespace endpoints {
     export const COPY = "/copy"
 
     export const FS_LIST = FS + LIST
-    export const FS_CD = FS + CD
+    //export const FS_CD = FS + CD
     export const FS_PWD = FS + PWD
     export const FS_DOWNLOAD = FS + DOWNLOAD
     export const FS_DOWNZIP = FS + DOWNZIP
