@@ -254,7 +254,7 @@ export class TableNavigatorComponent
 
   elementClick (element: FileDetails) {
     if (element.ftype == FileType.Directory) {
-      this.fileServerService.list(element.name)
+      this.fileServerService.list_rel(element.name)
     } else if (element.ftype == FileType.File) {
       this.downloadFileName(element.name)
     }

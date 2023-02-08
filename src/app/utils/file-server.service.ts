@@ -32,7 +32,7 @@ import {
   RemFile_Request,
   RemFile_Response
 } from '../../common/interfaces'
-import { resolver } from './resolver'
+import { resolver, ResolverPath } from './resolver'
 
 @Injectable({
   providedIn: 'root'
@@ -114,7 +114,7 @@ export class FileServerService {
   pwd (): void {
     console.log('click PWD')
 
-    this.list();
+    this.list()
   }
 
   /*   cd(relPath: string, remoteDirectory: string | null = null, returnList = true): void {
@@ -145,6 +145,19 @@ export class FileServerService {
       })
   } */
 
+  list_fix (path: string | null = null): void {
+    if (path === null) {
+      path = this.remoteDirectory
+    }
+    let resolvedPath = resolver.resolve(path)
+    this.list_priv(resolvedPath)
+  }
+
+  list_rel (rel_path: string): void {
+    let resolvedPath = resolver.resolve(this.remoteDirectory, rel_path)
+    this.list_priv(resolvedPath)
+  }
+
   list (
     path: string | null = null,
     remoteDirectory: string | null = null
@@ -160,9 +173,13 @@ export class FileServerService {
       : this.remoteDirectory
     let resolvedPath = resolver.resolve(parentDirectory, path)
 
+    this.list_priv(resolvedPath)
+  }
+
+  private list_priv (resolvedPath: ResolverPath): void {
     const url = resolvedPath.getFullUrl(this.serverUrl, endpoints.FS_LIST)
 
-    console.log(`list url ${url}`, path, remoteDirectory)
+    console.log(`list url ${url}`)
     this.http
       .get<FileDetails[]>(url)
       .pipe(
@@ -183,7 +200,7 @@ export class FileServerService {
   }
 
   private setRemoteDirectory (remoteDirectory: string | null) {
-    if (remoteDirectory) {
+    if (remoteDirectory !== null) {
       this.remoteDirectory = remoteDirectory
       this.newRemoteDirectory.next(this.remoteDirectory)
     }
@@ -215,11 +232,9 @@ export class FileServerService {
     return throwError(() => new Error(message))
   }
 
-  private getFileHref (path: string, archive = false): string {
+  private getFileHref (resolvedPath: ResolverPath, archive = false): string {
     let endpoint = archive ? endpoints.FS_DOWNZIP : endpoints.FS_DOWNLOAD
-    const href =
-      environment.serverUrl + endpoint + '/' + encodeURIComponent(path)
-    return href
+    return resolvedPath.getFullUrl(environment.serverUrl, endpoint);
   }
 
   getFileNameHref (fileName: string, archive = false): string {
@@ -233,8 +248,9 @@ export class FileServerService {
   }
 
   downloadFileName (fileName: string, archive = false) {
-    let filePath = this.remoteDirectory + '/' + fileName
-    this.downloadFilePath(filePath, archive)
+  
+    let resolvedPath = resolver.resolve(this.remoteDirectory, fileName)
+    this.downloadFilePath(resolvedPath, archive)
   }
 
   private getLast (filePath: string) {
@@ -242,19 +258,19 @@ export class FileServerService {
     return filePath.substring(idx)
   }
 
-  downloadFilePath (filePath: string, archive = false) {
-    const href = this.getFileHref(filePath, archive)
+  downloadFilePath (resolvedPath: ResolverPath, archive = false) {
+    const href = this.getFileHref(resolvedPath, archive)
 
     const link = document.createElement('a')
     link.setAttribute('target', '_blank')
     link.setAttribute('href', href)
-    link.setAttribute('download', this.getLast(filePath))
+    link.setAttribute('download', this.getLast(resolvedPath.basename))
     document.body.appendChild(link)
     link.click()
     link.remove()
 
     this.downloadFileSubject.next({
-      path: filePath,
+      path: resolvedPath.network,
       archive: archive
     })
   }

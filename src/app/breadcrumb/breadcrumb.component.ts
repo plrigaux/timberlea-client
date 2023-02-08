@@ -28,7 +28,7 @@ export class BreadcrumbComponent implements OnInit {
   clickChip(chip: PathChip) {
     console.log("chip", chip)
 
-    this.fileServerService.list(chip.path)
+    this.fileServerService.list_fix(chip.path)
   }
 
   private setUpChips(remoteDirectory: string) {
