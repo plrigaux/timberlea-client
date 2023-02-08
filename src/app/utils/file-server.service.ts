@@ -402,8 +402,9 @@ export class FileServerService {
 
     this.waitingSubject.next(true)
     let request: MakeDirRequest = {
-      parent: this.remoteDirectory,
-      dirName: directoryName
+      recursive: false,
+      overwrite: false,
+      autoNaming: true
     }
 
     const options = {
@@ -412,9 +413,11 @@ export class FileServerService {
       })
     }
 
+    let resolvedPath = resolver.resolve(this.remoteDirectory, directoryName)
+    let url = resolvedPath.getFullUrl(this.serverUrl , endpoints.FS_MKDIR);
     this.http
       .post<MakeDirResponse>(
-        this.serverUrl + endpoints.FS_MKDIR,
+        url,
         request,
         options
       )

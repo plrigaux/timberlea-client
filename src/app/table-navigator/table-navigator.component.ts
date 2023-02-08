@@ -175,11 +175,7 @@ export class TableNavigatorComponent
 
   private updateDataSource (filelist: FileDetails[]) {
     let remoteFiles: FileDetails[]
-    if (!this.fileServerService.isHome()) {
-      remoteFiles = [{ name: '..', ftype: FileType.Directory }, ...filelist]
-    } else {
-      remoteFiles = filelist
-    }
+    remoteFiles = filelist
 
     this.updateDataSource2(remoteFiles)
   }

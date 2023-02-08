@@ -41,8 +41,8 @@ export interface ChangeDir_Response extends FileList_Response {
 }
 
 export interface MakeDirRequest {
-    parent: string
-    dirName: string
+    overwrite?: boolean
+    autoNaming?: boolean
     recursive?: boolean
 }
 
