@@ -20,6 +20,7 @@ import { endpoints } from '../../common/constants'
 import {
   ChangeDir_Request,
   ChangeDir_Response,
+  ErrorResponse,
   FileDetails,
   FileDetail_Response,
   FileList_Response,
@@ -32,6 +33,10 @@ import {
   RemFile_Request,
   RemFile_Response
 } from '../../common/interfaces'
+import {
+  ErrorData,
+  ErrorSnackComponent
+} from '../error-snack/error-snack.component'
 import { resolver, ResolverPath } from './resolver'
 
 @Injectable({
@@ -213,19 +218,34 @@ export class FileServerService {
 
   private handleError (error: HttpErrorResponse): Observable<never> {
     let message = ''
+    let time_sec = 10
+    let errorData: ErrorData = {
+      status: 0,
+      statusText: ''
+    }
     if (error.status === 0) {
       // A client-side or network error occurred. Handle it accordingly.
-      ;(message = 'An error occurred:'), error.error
+      errorData.status = 0
+      errorData.statusText = error.statusText
+      //errorData.message = `Connection error ${error.message}`;
+      console.warn(error)
+      time_sec = 60
     } else {
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong.
-      message = `${error.status} - ${
-        error.statusText
-      }},\n body was: ${JSON.stringify(error.error)}`
+      errorData.status = error.status
+      errorData.statusText = error.statusText
+      let srv_error: ErrorResponse = error.error
+      errorData.serverCode = srv_error.error
+      errorData.serverMessage = srv_error.message
     }
 
-    this._snackBar.open(message, 'Close', {
-      duration: 10 * 1000
+    /*     this._snackBar.open(message, 'Close', {
+      duration: time_sec * 1000
+    }) */
+    this._snackBar.openFromComponent(ErrorSnackComponent, {
+      duration: time_sec * 1000,
+      data: errorData
     })
     this.waitingSubject.next(false)
 
@@ -234,7 +254,7 @@ export class FileServerService {
 
   private getFileHref (resolvedPath: ResolverPath, archive = false): string {
     let endpoint = archive ? endpoints.FS_DOWNZIP : endpoints.FS_DOWNLOAD
-    return resolvedPath.getFullUrl(environment.serverUrl, endpoint);
+    return resolvedPath.getFullUrl(environment.serverUrl, endpoint)
   }
 
   getFileNameHref (fileName: string, archive = false): string {
@@ -248,7 +268,6 @@ export class FileServerService {
   }
 
   downloadFileName (fileName: string, archive = false) {
-  
     let resolvedPath = resolver.resolve(this.remoteDirectory, fileName)
     this.downloadFilePath(resolvedPath, archive)
   }
@@ -395,8 +414,8 @@ export class FileServerService {
       })
   }
 
-  newFolder (directoryName: string | null | undefined) {
-    if (!directoryName) {
+  newFolder (expectedDirectoryName: string | null | undefined) {
+    if (!expectedDirectoryName) {
       return
     }
 
@@ -413,14 +432,13 @@ export class FileServerService {
       })
     }
 
-    let resolvedPath = resolver.resolve(this.remoteDirectory, directoryName)
-    let url = resolvedPath.getFullUrl(this.serverUrl , endpoints.FS_MKDIR);
+    let resolvedPath = resolver.resolve(
+      this.remoteDirectory,
+      expectedDirectoryName
+    )
+    let url = resolvedPath.getFullUrl(this.serverUrl, endpoints.FS_MKDIR)
     this.http
-      .post<MakeDirResponse>(
-        url,
-        request,
-        options
-      )
+      .post<MakeDirResponse>(url, request, options)
       .pipe(
         tap((data: MakeDirResponse) => {
           this.setRemoteDirectory(null)
@@ -430,7 +448,9 @@ export class FileServerService {
       )
       .subscribe({
         next: (data: MakeDirResponse) => {
-          this.newFolderSubject.next(data.dirName)
+          let new_dir_name = data ? data.newFileName : expectedDirectoryName
+
+          this.newFolderSubject.next(new_dir_name)
         },
         error: e => {}
       })
