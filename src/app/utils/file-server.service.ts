@@ -216,7 +216,7 @@ export class FileServerService {
     return this.remoteDirectory === ''
   }
 
-  private handleError (error: HttpErrorResponse): Observable<never> {
+  handleError (error: HttpErrorResponse): Observable<never> {
     let message = ''
     let time_sec = 10
     let errorData: ErrorData = {
@@ -259,12 +259,9 @@ export class FileServerService {
 
   getFileNameHref (fileName: string, archive = false): string {
     let endpoint = archive ? endpoints.FS_DOWNZIP : endpoints.FS_DOWNLOAD
-    const href =
-      environment.serverUrl +
-      endpoint +
-      '/' +
-      encodeURIComponent(this.remoteDirectory + '/' + fileName)
-    return href
+    const resolvedPath = resolver.resolve(this.remoteDirectory, fileName)
+
+    return this.getFileHref(resolvedPath)
   }
 
   downloadFileName (fileName: string, archive = false) {
@@ -305,6 +302,10 @@ export class FileServerService {
       fileName: fileName
     }
 
+    let resolvedPath = resolver.resolve(this.remoteDirectory, fileName)
+
+    const url = resolvedPath.getFullUrl(this.serverUrl, endpoints.FS_REM)
+
     const options = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
@@ -312,22 +313,21 @@ export class FileServerService {
       body: request
     }
 
-    let ob = this.http
-      .delete<RemFile_Response>(this.serverUrl + endpoints.FS_REM, options)
+    this.http
+      .delete(url, options)
       .pipe(
-        tap((data: RemFile_Response) => {
+        tap(() => {
           this.setRemoteDirectory(null)
         }),
         retry(2),
         catchError(e => this.handleError(e as HttpErrorResponse))
       )
-
-    ob.subscribe({
-      next: (data: RemFile_Response) => {
-        this.deleteSubject.next(fileName)
-      },
-      error: e => {}
-    })
+      .subscribe({
+        next: () => {
+          this.deleteSubject.next(fileName)
+        },
+        error: e => {}
+      })
   }
 
   selectFile (fileContext: SelectFileContext | null) {

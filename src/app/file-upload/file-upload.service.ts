@@ -1,29 +1,40 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
-import { endpoints } from '../../common/constants';
+import { Injectable } from '@angular/core'
+import { HttpClient } from '@angular/common/http'
+import { Observable } from 'rxjs'
+import { environment } from 'src/environments/environment'
+import { endpoints } from '../../common/constants'
+import { resolver } from '../utils/resolver'
+import { FileServerService } from '../utils/file-server.service'
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class FileUploadService {
+  // API url
+  baseApiUrl = environment.serverUrl + endpoints.FS_UPLOAD
 
-    // API url
-    baseApiUrl = environment.serverUrl + endpoints.FS_UPLOAD
+  constructor (
+    private http: HttpClient,
+    private fileServerService: FileServerService
+  ) {}
 
-    constructor(private http: HttpClient) { }
+  // Returns an observable
+  upload (file: File): Observable<any> {
+    // Create form data
+    const formData = new FormData()
 
-    // Returns an observable
-    upload(file: File): Observable<any> {
+    // Store form name as "file" with file data
+    formData.append('file', file, file.name)
 
-        // Create form data
-        const formData = new FormData();
+    // Make http post request over api
+    // with formData as req
 
-        // Store form name as "file" with file data
-        formData.append("file", file, file.name);
+    let resolvedPath = resolver.resolve(this.fileServerService.remoteDirectory)
 
-        // Make http post request over api
-        // with formData as req
-        return this.http.post(this.baseApiUrl, formData)
-    }
+    let url = resolvedPath.getFullUrl(
+      environment.serverUrl,
+      endpoints.FS_UPLOAD
+    )
+
+    return this.http.post(url, formData)
+  }
 }
