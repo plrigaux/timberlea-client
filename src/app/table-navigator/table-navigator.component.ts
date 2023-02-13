@@ -4,6 +4,7 @@ import { TemplatePortal } from '@angular/cdk/portal'
 import {
   AfterViewInit,
   Component,
+  Inject,
   OnDestroy,
   OnInit,
   TemplateRef,
@@ -184,6 +185,7 @@ export class TableNavigatorComponent
     console.log('updateDataSource2', filelist)
     this.dataSource = new MatTableDataSource(filelist)
     this.dataSource.sort = this.sort
+    this.dataSource.sortData = this.sortData()
     this.dataSource.filterPredicate = (data: FileDetails, filter: string) => {
       return data.name.trim().toLowerCase().indexOf(filter) !== -1
     }
@@ -202,6 +204,38 @@ export class TableNavigatorComponent
     } else {
       this._liveAnnouncer.announce('Sorting cleared')
     }
+  }
+
+  sortData () {
+    let sortFunction = (items: FileDetails[], sort: MatSort): FileDetails[] => {
+      if (!sort.active || sort.direction === '') {
+        return items
+      }
+
+      return items.sort((a: FileDetails, b: FileDetails) => {
+        let comparatorResult = 0
+        switch (sort.active) {
+          case 'type':
+            comparatorResult = a.ftype - b.ftype
+            break
+          case 'name':
+            comparatorResult = a.name.localeCompare(b.name)
+            break
+          case 'size':
+            comparatorResult = compareNum(a.size, b.size)
+            break
+          case 'dateModif':
+            comparatorResult = compareString(a.mtime, b.mtime)
+            break
+          default:
+            comparatorResult = a.name.localeCompare(b.name)
+            break
+        }
+        return comparatorResult * (sort.direction == 'asc' ? 1 : -1)
+      })
+    }
+
+    return sortFunction
   }
 
   highlightRow (row: any) {
@@ -228,8 +262,10 @@ export class TableNavigatorComponent
     switch (e.ftype) {
       case FileType.Directory:
         return 'folder'
+      case FileType.File:
+        return 'text_snippet'
     }
-    return 'text_snippet'
+    return ''
   }
 
   fileNameCSS (e: FileDetails): string {
@@ -418,4 +454,27 @@ export class TableNavigatorComponent
       top: `${this.rightClickMenuPositionY}px`
     }
   }
+}
+
+const compareNum = (a: number | undefined, b: number | undefined): number => {
+  if (a == null) {
+    a = -1
+  }
+  if (b == null) {
+    b = -1
+  }
+  return a - b
+}
+
+const compareString = (
+  a: string | undefined,
+  b: string | undefined
+): number => {
+  if (a == null) {
+    a = ''
+  }
+  if (b == null) {
+    b = ''
+  }
+  return a.localeCompare(b)
 }
