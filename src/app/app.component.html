@@ -1,4 +1,4 @@
-<div class="container">
+ <div class="container">
 
   <header class="header">
     <mat-toolbar>
@@ -12,7 +12,7 @@
     </mat-toolbar>
   </header>
   <main class="content">
-    <mat-drawer-container class="sidenav-container" [hasBackdrop]="true">
+<!--     <mat-drawer-container class="sidenav-container" [hasBackdrop]="true">
       <mat-drawer #drawer [(opened)]="sidebar_open" class="sidenav-content" mode="side">
         <mat-tab-group [selectedIndex]="tabSelectedIndex">
           <mat-tab labelClass="navTabLabelClass">
@@ -36,7 +36,9 @@
       <mat-drawer-content>
         <app-table-navigator></app-table-navigator>
       </mat-drawer-content>
-    </mat-drawer-container>
+    </mat-drawer-container> -->
+
+    <app-table-navigator></app-table-navigator>
   </main>
   <footer class="footer">
     <app-controls id="bottom"></app-controls>
@@ -44,6 +46,52 @@
 </div>
 
 
+<!-- <mat-grid-list cols="1" >
+  <mat-grid-tile mat-grid-tile-header>
+    <mat-toolbar>
+      <mat-toolbar-row>
+        <app-menu></app-menu>
+        <app-file-upload></app-file-upload>
+      </mat-toolbar-row>
+      <mat-toolbar-row>
+        <app-breadcrumb></app-breadcrumb>
+      </mat-toolbar-row>
+    </mat-toolbar>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-drawer-container class="sidenav-container" [hasBackdrop]="true">
+      <mat-drawer
+        #drawer
+        [(opened)]="sidebar_open"
+        class="sidenav-content"
+        mode="side"
+      >
+        <mat-tab-group [selectedIndex]="tabSelectedIndex">
+          <mat-tab labelClass="navTabLabelClass">
+            <ng-template mat-tab-label>
+              <mat-icon class="example-tab-icon">bookmark</mat-icon>
+            </ng-template>
+            <ng-template matTabContent>
+              <app-bookmark></app-bookmark>
+            </ng-template>
+          </mat-tab>
+          <mat-tab labelClass="navTabLabelClass">
+            <ng-template mat-tab-label>
+              <mat-icon class="example-tab-icon">history</mat-icon>
+            </ng-template>
+            <ng-template matTabContent>
+              <app-history></app-history>
+            </ng-template>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-drawer>
+      <mat-drawer-content>
+        <app-table-navigator></app-table-navigator>
+      </mat-drawer-content>
+    </mat-drawer-container>
+  </mat-grid-tile>
+  <mat-grid-tile mat-grid-tile-footer> <app-controls id="bottom"></app-controls> </mat-grid-tile>
+</mat-grid-list> -->
 
 <!-- div *ngFor="let message of messages | async">
   {{message.message}}

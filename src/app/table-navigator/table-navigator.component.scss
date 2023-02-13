@@ -1,13 +1,25 @@
-$magin-size: 2em;
+$magin-size: 1em;
 
-table {
-  width: calc(100% - $magin-size - $magin-size);
-  margin-top: 1em;
-  margin-left: $magin-size;
-  margin-right: $magin-size;
+/* :host {
+background-color: aquamarine;
+width: 100%;
+} */
+.file_container {
+  width: 100%;
+  margin: 1em;
 }
 
-.container {
+.filter {
+  font-size: 14px;
+  width: calc(100% - 2em);
+}
+
+table {
+  width: 100% !important;
+}
+
+
+/* .container {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -16,30 +28,84 @@ table {
 .container * {
   margin: 1em;
 }
+ */
 
-.directory {
-  color: green;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.file {
-  color: white;
-  cursor: pointer;
-}
+ $type-width: 7%;
+ $name-width: 53%;
+ $size-width: 20%;
+ $date-width: 20%;
 
 .mat-column-type {
-  width: 32px;
-  //border-right: 1px solid currentColor;
-  //padding-right: 24px;
-  //text-align: center;
+  padding-left: 1em;
+
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0  $type-width!important;
+  width:  $type-width!important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }
+
+$name-width: 50%;
 
 .mat-column-name {
-  max-width: 22px;
+  //max-width: 122px;
   padding-left: 1em;
+
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 $name-width !important;
+  width: $name-width !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }
 
+.mat-column-size {
+  //max-width: 122px;
+  padding-left: 1em;
+  padding-left: 1em;
+
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 $size-width !important;
+  width: $size-width !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+.mat-column-dateModif {
+  padding-left: 1em;
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 $date-width !important;
+  width: $date-width !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
 
 $file-row-hover-color:  grey;
 $file-row-highlight-color:  rgb(110, 138, 115);;
@@ -94,7 +160,14 @@ $file-row-highlight-color:  rgb(110, 138, 115);;
   justify-content: center;
 }
 
-.filter {
-  font-size: 14px;
-  width: 100%;
+
+.directory {
+  color: green;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.file {
+  color: white;
+  cursor: pointer;
 }
