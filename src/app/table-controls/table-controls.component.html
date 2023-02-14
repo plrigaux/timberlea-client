@@ -10,9 +10,9 @@
 <mat-slide-toggle>Filter Hidden</mat-slide-toggle>
 <mat-form-field appearance="fill">
   <mat-label>Sort Order</mat-label>
-  <mat-select>
-    <mat-option *ngFor="let food of foods" [value]="food.value">
-      {{ food.viewValue }}
+  <mat-select [value]="selectedSortOrder" (selectionChange)="setSelectedSortOrder($event.value)">
+    <mat-option *ngFor="let sortOrder of sortOrders" [value]="sortOrder.value">
+      {{ sortOrder.viewValue }}
     </mat-option>
   </mat-select>
 </mat-form-field>

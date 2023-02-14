@@ -1,4 +1,5 @@
 import { Component } from '@angular/core'
+import { SortOrderValue, TableControlsService } from './table-controls.service'
 
 @Component({
   selector: 'app-table-controls',
@@ -6,21 +7,34 @@ import { Component } from '@angular/core'
   styleUrls: ['./table-controls.component.scss']
 })
 export class TableControlsComponent {
+  constructor (private tableControlService: TableControlsService) {}
+
   applyFilter (event: Event) {
     let filterValue = (event.target as HTMLInputElement).value
     filterValue = filterValue.trim() // Remove whitespace
 
-    console.log(filterValue)
+    this.tableControlService.applyFilter(filterValue)
   }
 
-  foods: Food[] = [
-    { value: 'default', viewValue: 'Default' },
-    { value: 'mixed', viewValue: 'Mixed' },
-    { value: 'fileFirst', viewValue: 'File First' }
+  sortOrders: SortOrder[] = [
+    { value: SortOrderValue.DEFAULT, viewValue: 'Default' },
+    { value: SortOrderValue.MIXED, viewValue: 'Mixed' },
+    { value: SortOrderValue.FILE_FIRST, viewValue: 'File First' }
   ]
+
+  private _selectedSortOrder: SortOrderValue = SortOrderValue.DEFAULT
+
+  setSelectedSortOrder (sortOrder: SortOrderValue) {
+    this._selectedSortOrder = sortOrder
+    this.tableControlService.sortOrder(this._selectedSortOrder)
+  }
+
+  get selectedSortOrder () {
+    return this._selectedSortOrder
+  }
 }
 
-interface Food {
-  value: string
+interface SortOrder {
+  value: SortOrderValue
   viewValue: string
 }

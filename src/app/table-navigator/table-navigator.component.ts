@@ -24,6 +24,10 @@ import {
   ImageViewerComponent
 } from '../image-viewer/image-viewer.component'
 import {
+  SortOrderValue,
+  TableControlsService
+} from '../table-controls/table-controls.service'
+import {
   FileDetailsPlus,
   FileServerService,
   SelectFileContext
@@ -54,7 +58,8 @@ export class TableNavigatorComponent
     private _liveAnnouncer: LiveAnnouncer,
     private _dialog: MatDialog,
     public overlay: Overlay,
-    public viewContainerRef: ViewContainerRef
+    public viewContainerRef: ViewContainerRef,
+    private tableControlsService: TableControlsService
   ) {
     this.dataSource = new MatTableDataSource([] as FileDetails[])
 
@@ -71,6 +76,14 @@ export class TableNavigatorComponent
 
     this.dateFormat = Intl.DateTimeFormat('default', dateOptions)
     this.timeFormat = Intl.DateTimeFormat('default', timeOptions)
+
+    tableControlsService.sortOrder$.subscribe(sortOrder => {
+      this.newSortOrder(sortOrder)
+    })
+
+    tableControlsService.filter$.subscribe(filter => {
+      this.applyFilter(filter)
+    })
   }
 
   ngOnInit (): void {
@@ -206,7 +219,7 @@ export class TableNavigatorComponent
     }
   }
 
-  sortData () {
+  private sortData () {
     let sortFunction = (items: FileDetails[], sort: MatSort): FileDetails[] => {
       if (!sort.active || sort.direction === '') {
         return items
@@ -216,19 +229,32 @@ export class TableNavigatorComponent
         let comparatorResult = 0
         switch (sort.active) {
           case 'type':
-            comparatorResult = a.ftype - b.ftype
+            comparatorResult = this.specialSort(
+              a,
+              b,
+              sort,
+              (a, b) => a.ftype - b.ftype
+            )
             break
           case 'name':
-            comparatorResult = a.name.localeCompare(b.name)
+            comparatorResult = this.specialSort(a, b, sort, (a, b) =>
+              a.name.localeCompare(b.name)
+            )
             break
           case 'size':
-            comparatorResult = compareNum(a.size, b.size)
+            comparatorResult = this.specialSort(a, b, sort, (a, b) =>
+              compareNum(a.size, b.size)
+            )
             break
           case 'dateModif':
-            comparatorResult = compareString(a.mtime, b.mtime)
+            comparatorResult = this.specialSort(a, b, sort, (a, b) =>
+              compareString(a.mtime, b.mtime)
+            )
             break
           default:
-            comparatorResult = a.name.localeCompare(b.name)
+            comparatorResult = this.specialSort(a, b, sort, (a, b) =>
+              a.name.localeCompare(b.name)
+            )
             break
         }
         return comparatorResult * (sort.direction == 'asc' ? 1 : -1)
@@ -236,6 +262,31 @@ export class TableNavigatorComponent
     }
 
     return sortFunction
+  }
+
+  private specialSort: (
+    a: FileDetails,
+    b: FileDetails,
+    sort: MatSort,
+    subFunc: (a: FileDetails, b: FileDetails) => number
+  ) => number = defaultSort
+
+  newSortOrder (sortOrder: SortOrderValue) {
+    console.log('sortOrder', sortOrder)
+    switch (sortOrder) {
+      case SortOrderValue.DEFAULT:
+        this.specialSort = defaultSort
+        break
+      case SortOrderValue.MIXED:
+        this.specialSort = mixedSort
+        break
+      case SortOrderValue.FILE_FIRST:
+        this.specialSort = fileFirstSort
+        break
+      default:
+        this.specialSort = defaultSort
+        break
+    }
   }
 
   highlightRow (row: any) {
@@ -313,10 +364,9 @@ export class TableNavigatorComponent
   }
 
   displaySize (param: FileDetails): string {
-    let size = ''
-    if (param.ftype == FileType.File && param.size) {
-      size = this.humanFileSize(param.size, true)
-    }
+    let size =
+      param.size !== undefined ? this.humanFileSize(param.size, true) : ''
+
     return size
   }
 
@@ -385,8 +435,7 @@ export class TableNavigatorComponent
     this.fileServerService.selectFile(fileSelectContext)
   }
 
-  applyFilter (event: Event) {
-    let filterValue = (event.target as HTMLInputElement).value
+  applyFilter (filterValue: string) {
     filterValue = filterValue.trim() // Remove whitespace
     filterValue = filterValue.toLowerCase() // MatTableDataSource defaults to lowercase matches
     this.dataSource.filter = filterValue
@@ -477,4 +526,54 @@ const compareString = (
     b = ''
   }
   return a.localeCompare(b)
+}
+
+let defaultSort = (
+  a: FileDetails,
+  b: FileDetails,
+  sort: MatSort,
+  subFunc: (a: FileDetails, b: FileDetails) => number
+): number => {
+  let ret_value: number
+
+  if (a.ftype == b.ftype) {
+    ret_value = subFunc(a, b)
+  } else if (a.ftype == FileType.Directory) {
+    ret_value = sort.direction == 'asc' ? -1 : 1
+  } else {
+    ret_value = sort.direction == 'asc' ? 1 : -1
+  }
+
+  return ret_value
+}
+
+let mixedSort = (
+  a: FileDetails,
+  b: FileDetails,
+  sort: MatSort,
+  subFunc: (a: FileDetails, b: FileDetails) => number
+): number => {
+  return subFunc(a, b)
+}
+
+let fileFirstSort = (
+  a: FileDetails,
+  b: FileDetails,
+  sort: MatSort,
+  subFunc: (a: FileDetails, b: FileDetails) => number
+): number => {
+  let ret_value: number
+
+  if (
+    a.ftype == b.ftype ||
+    (a.ftype != FileType.Directory && b.ftype != FileType.Directory)
+  ) {
+    ret_value = subFunc(a, b)
+  } else if (a.ftype != FileType.Directory) {
+    ret_value = sort.direction == 'asc' ? -1 : 1
+  } else {
+    ret_value = sort.direction == 'asc' ? 1 : -1
+  }
+
+  return ret_value
 }
