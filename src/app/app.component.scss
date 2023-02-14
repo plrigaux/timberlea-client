@@ -8,7 +8,7 @@
 .header {
   flex-shrink: 0;
   flex-grow: 0;
-  padding: 3px 5px;
+  //padding: 3px 5px;
 }
 
 .content {
@@ -28,4 +28,9 @@
 ::ng-deep .navTabLabelClass {
   //color: red;
   min-width: 3em !important;
+}
+
+.toolbar {
+  gap: 10px;
+  height: 5em;
 }

@@ -1,0 +1,18 @@
+<mat-form-field appearance="fill" class="filter">
+  <mat-label>File name filter</mat-label>
+  <input
+    matInput
+    (keyup)="applyFilter($event)"
+    placeholder="File name"
+    #input
+  />
+</mat-form-field>
+<mat-slide-toggle>Filter Hidden</mat-slide-toggle>
+<mat-form-field appearance="fill">
+  <mat-label>Sort Order</mat-label>
+  <mat-select>
+    <mat-option *ngFor="let food of foods" [value]="food.value">
+      {{ food.viewValue }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

@@ -39,6 +39,10 @@ import { DialogFileCreate } from './menu/dialog-file-create'
 import { ImageViewerComponent } from './image-viewer/image-viewer.component'
 import { ErrorSnackComponent } from './error-snack/error-snack.component'
 import { MatGridListModule } from '@angular/material/grid-list'
+import { TableControlsComponent } from './table-controls/table-controls.component'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatSelectModule } from '@angular/material/select'
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -56,7 +60,8 @@ import { MatGridListModule } from '@angular/material/grid-list'
     BookmarkComponent,
     HistoryComponent,
     ImageViewerComponent,
-    ErrorSnackComponent
+    ErrorSnackComponent,
+    TableControlsComponent
   ],
   imports: [
     BrowserModule,
@@ -83,7 +88,9 @@ import { MatGridListModule } from '@angular/material/grid-list'
     MatSidenavModule,
     MatTooltipModule,
     MatTabsModule,
-    MatGridListModule
+    MatGridListModule,
+    MatSlideToggleModule,
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]
